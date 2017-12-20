@@ -15,8 +15,8 @@ import { MaterialInventoryJournalEditApp } from "./MaterialInventoryJournalEditA
 
 /** 列表应用-仓库日记账 */
 export class MaterialJournalListApp
-            extends ibas.BOListApplication<IMaterialInventoryJournalListView
-                                        , bo.MaterialInventoryJournal> {
+    extends ibas.BOListApplication<IMaterialInventoryJournalListView
+    , bo.MaterialInventoryJournal> {
 
     /** 应用标识 */
     static APPLICATION_ID: string = "97139ec9-5930-4476-91d7-260d25ce696b";
@@ -54,6 +54,9 @@ export class MaterialJournalListApp
                 try {
                     if (opRslt.resultCode !== 0) {
                         throw new Error(opRslt.message);
+                    }
+                    if (opRslt.resultObjects.length === 0) {
+                        that.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_data_fetched_none"));
                     }
                     that.view.showData(opRslt.resultObjects);
                     that.busy(false);
@@ -101,7 +104,7 @@ export class MaterialJournalListApp
         app.run(data);
     }
     /** 删除数据，参数：目标数据集合 */
-    protected deleteData(data: bo.MaterialInventoryJournal): void {
+    protected deleteData(data: bo.MaterialInventoryJournal | bo.MaterialInventoryJournal[]): void {
         // 检查目标数据
         if (ibas.objects.isNull(data)) {
             this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_please_chooose_data",
@@ -109,14 +112,15 @@ export class MaterialJournalListApp
             ));
             return;
         }
-        let beDeleteds:ibas.ArrayList<bo.MaterialInventoryJournal> = new ibas.ArrayList<bo.MaterialInventoryJournal>();
-        if (data instanceof Array ) {
+        let beDeleteds: ibas.ArrayList<bo.MaterialInventoryJournal> = new ibas.ArrayList<bo.MaterialInventoryJournal>();
+        if (data instanceof Array) {
             for (let item of data) {
-                if (ibas.objects.instanceOf(item, bo.MaterialInventoryJournal)) {
-                    item.delete();
-                    beDeleteds.add(item);
-                }
+                item.delete();
+                beDeleteds.add(item);
             }
+        } else {
+            data.delete();
+            beDeleteds.add(data);
         }
         // 没有选择删除的对象
         if (beDeleteds.length === 0) {
@@ -132,7 +136,7 @@ export class MaterialJournalListApp
                 if (action === ibas.emMessageAction.YES) {
                     try {
                         let boRepository: BORepositoryMaterials = new BORepositoryMaterials();
-                        let saveMethod: Function = function(beSaved: bo.MaterialInventoryJournal):void {
+                        let saveMethod: Function = function (beSaved: bo.MaterialInventoryJournal): void {
                             boRepository.saveMaterialInventoryJournal({
                                 beSaved: beSaved,
                                 onCompleted(opRslt: ibas.IOperationResult<bo.MaterialInventoryJournal>): void {
@@ -148,7 +152,7 @@ export class MaterialJournalListApp
                                             // 处理完成
                                             that.busy(false);
                                             that.messages(ibas.emMessageType.SUCCESS,
-                                            ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_sucessful"));
+                                                ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_sucessful"));
                                         }
                                     } catch (error) {
                                         that.messages(ibas.emMessageType.ERROR,
