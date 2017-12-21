@@ -10,7 +10,6 @@ import * as ibas from "ibas/index";
 import * as openui5 from "openui5/index";
 import * as bo from "../../../borep/bo/index";
 import { IMaterialEditView } from "../../../bsapp/material/index";
-import { emItemType } from "../../../api/index";
 
 /**
  * 编辑视图-物料
@@ -59,7 +58,7 @@ export class MaterialEditView extends ibas.BOEditView implements IMaterialEditVi
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_material_itemtype") }),
                 new sap.m.Select("", {
-                    items: openui5.utils.createComboBoxItems(emItemType),
+                    items: openui5.utils.createComboBoxItems(bo.emItemType),
                 }).bindProperty("selectedKey", {
                     path: "itemType",
                     type: "sap.ui.model.type.Integer",
@@ -146,8 +145,6 @@ export class MaterialEditView extends ibas.BOEditView implements IMaterialEditVi
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_material_defaultwarehouse") }),
                 new sap.m.Input("", {
-                    placeholder: ibas.i18n.prop("bo_material_defaultwarehouse"),
-                    tooltip: ibas.i18n.prop("bo_material_defaultwarehouse"),
                     showValueHelp: true,
                     valueHelpRequest: function (): void {
                         that.fireViewEvents(that.chooseMaterialWarehouseEvent);
@@ -163,8 +160,8 @@ export class MaterialEditView extends ibas.BOEditView implements IMaterialEditVi
                     type: "sap.ui.model.type.Integer",
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_material_serialmanagement") }),
-                new sap.m.SegmentedButton("", {
-                    items: openui5.utils.createSegmentedButtonItems(ibas.emYesNo),
+                new sap.m.Select("", {
+                    items: openui5.utils.createComboBoxItems(ibas.emYesNo),
                 }).bindProperty("selectedKey", {
                     path: "serialManagement",
                     type: "sap.ui.model.type.Integer",

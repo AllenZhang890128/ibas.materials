@@ -16,8 +16,8 @@ import { MaterialInventoryJournalFunc, } from "./materialinventoryjournal/index"
 import { MaterialFunc, MaterialChooseServiceMapping, MaterialLinkServiceMapping, ProductChooseServiceMapping } from "./material/index";
 import { MaterialGroupFunc, MaterialGroupChooseServiceMapping, MaterialGroupLinkServiceMapping } from "./materialgroup/index";
 import { WarehouseFunc, WarehouseChooseServiceMapping, WarehouseLinkServiceMapping } from "./warehouse/index";
-import { MaterialBatchReceipServiceMapping, MaterialBatchIssueServiceMapping, MaterialBatchFunc } from "./materialbatch/index";
-import { MaterialSerialReceipServiceMapping, MaterialSerialIssueServiceMapping, MaterialSerialFunc } from "./materialserial/index";
+import { MaterialReceiptBatchServiceMapping, MaterialIssueBatchServiceMapping, MaterialBatchFunc } from "./materialbatch/index";
+import { MaterialReceiptSerialServiceMapping, MaterialIssueSerialServiceMapping, MaterialSerialFunc } from "./materialserial/index";
 
 /** 模块控制台 */
 export class Console extends ibas.ModuleConsole {
@@ -38,13 +38,15 @@ export class Console extends ibas.ModuleConsole {
     protected registers(): void {
         // 注册功能
         this.register(new MaterialFunc());
-        this.register(new MaterialGroupFunc());
-        this.register(new WarehouseFunc());
-        this.register(new GoodsIssueFunc());
         this.register(new GoodsReceiptFunc());
+        this.register(new GoodsIssueFunc());
         this.register(new InventoryTransferFunc());
+        this.register(new MaterialBatchFunc());
+        this.register(new MaterialSerialFunc());
+        this.register(new WarehouseFunc());
+        this.register(new MaterialGroupFunc());
         this.register(new MaterialInventoryFunc());
-        this.register(new MaterialInventoryJournalFunc());
+        // this.register(new MaterialInventoryJournalFunc());
         // 注册服务应用
         this.register(new MaterialChooseServiceMapping());
         this.register(new MaterialLinkServiceMapping());
@@ -53,12 +55,10 @@ export class Console extends ibas.ModuleConsole {
         this.register(new WarehouseChooseServiceMapping());
         this.register(new WarehouseLinkServiceMapping());
         this.register(new ProductChooseServiceMapping());
-        this.register(new MaterialBatchReceipServiceMapping);
-        this.register(new MaterialBatchIssueServiceMapping);
-        this.register(new MaterialSerialReceipServiceMapping);
-        this.register(new MaterialSerialIssueServiceMapping);
-        this.register(new MaterialBatchFunc());
-        this.register(new MaterialSerialFunc());
+        this.register(new MaterialReceiptBatchServiceMapping);
+        this.register(new MaterialIssueBatchServiceMapping);
+        this.register(new MaterialReceiptSerialServiceMapping);
+        this.register(new MaterialIssueSerialServiceMapping);
         // 注册常驻应用
 
     }

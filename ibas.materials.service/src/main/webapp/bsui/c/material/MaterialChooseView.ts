@@ -10,7 +10,6 @@ import * as ibas from "ibas/index";
 import * as openui5 from "openui5/index";
 import * as bo from "../../../borep/bo/index";
 import { IMaterialChooseView } from "../../../bsapp/material/index";
-import { emItemType } from "../../../api/index";
 
 /**
  * 选择视图-物料
@@ -90,7 +89,7 @@ export class MaterialChooseView extends ibas.BOChooseView implements IMaterialCh
                     template: new sap.m.Text("", {
                         wrapping: false
                     }).bindProperty("text", {
-                        path: "Group",
+                        path: "group",
                     }),
                 }),
                 new sap.ui.table.Column("", {
@@ -98,9 +97,9 @@ export class MaterialChooseView extends ibas.BOChooseView implements IMaterialCh
                     template: new sap.m.Text("", {
                         wrapping: false
                     }).bindProperty("text", {
-                        path: "ItemType",
+                        path: "itemType",
                         formatter(data: any): any {
-                            return ibas.enums.describe(emItemType, data);
+                            return ibas.enums.describe(bo.emItemType, data);
                         }
                     })
                 }),
@@ -109,7 +108,7 @@ export class MaterialChooseView extends ibas.BOChooseView implements IMaterialCh
                     template: new sap.m.Text("", {
                         wrapping: false,
                     }).bindProperty("text", {
-                        path: "OnHand",
+                        path: "onHand",
                     }),
                 }),
                 new sap.ui.table.Column("", {
@@ -117,7 +116,7 @@ export class MaterialChooseView extends ibas.BOChooseView implements IMaterialCh
                     template: new sap.m.Text("", {
                         wrapping: false,
                     }).bindProperty("text", {
-                        path: "UOM",
+                        path: "uOM",
                     }),
                 }),
                 new sap.ui.table.Column("", {
@@ -125,7 +124,7 @@ export class MaterialChooseView extends ibas.BOChooseView implements IMaterialCh
                     template: new sap.m.Text("", {
                         wrapping: false,
                     }).bindProperty("text", {
-                        path: "Remarks",
+                        path: "remarks",
                     }),
                 }),
                 new sap.ui.table.Column("", {
@@ -133,7 +132,7 @@ export class MaterialChooseView extends ibas.BOChooseView implements IMaterialCh
                     template: new sap.m.Text("", {
                         wrapping: false,
                     }).bindProperty("text", {
-                        path: "CreateDate",
+                        path: "createDate",
                         type: "sap.ui.model.type.Date",
                         formatOptions: {
                             style: "short"
