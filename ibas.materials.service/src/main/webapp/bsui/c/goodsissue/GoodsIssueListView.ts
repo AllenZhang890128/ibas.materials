@@ -54,49 +54,6 @@ export class GoodsIssueListView extends ibas.BOListView implements IGoodsIssueLi
                     })
                 }),
                 new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("bo_goodsissue_approvalstatus"),
-                    template: new sap.m.Text("", {
-                        wrapping: false
-                    }).bindProperty("text", {
-                        path: "approvalStatus",
-                        formatter(data: any): any {
-                            return ibas.enums.describe(ibas.emApprovalStatus, data);
-                        }
-                    })
-                }),
-                new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("bo_goodsissue_documenttotal"),
-                    template: new sap.m.Text("", {
-                        wrapping: false,
-                    }).bindProperty("text", {
-                        path: "documentTotal",
-                    }),
-                }),
-                new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("bo_goodsissue_postingdate"),
-                    template: new sap.m.Text("", {
-                        wrapping: false,
-                    }).bindProperty("text", {
-                        path: "postingDate",
-                        type: "sap.ui.model.type.Date",
-                        formatOptions: {
-                            style: "short"
-                        }
-                    }),
-                }),
-                new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("bo_goodsissue_deliverydate"),
-                    template: new sap.m.Text("", {
-                        wrapping: false,
-                    }).bindProperty("text", {
-                        path: "deliveryDate",
-                        type: "sap.ui.model.type.Date",
-                        formatOptions: {
-                            style: "short"
-                        }
-                    }),
-                }),
-                new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_goodsissue_documentdate"),
                     template: new sap.m.Text("", {
                         wrapping: false,
@@ -124,14 +81,6 @@ export class GoodsIssueListView extends ibas.BOListView implements IGoodsIssueLi
                         path: "reference2",
                     }),
                 }),
-                new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("bo_goodsissue_remarks"),
-                    template: new sap.m.Text("", {
-                        wrapping: false,
-                    }).bindProperty("text", {
-                        path: "remarks",
-                    }),
-                }),
             ]
         });
         this.form.addContent(this.table);
@@ -147,6 +96,7 @@ export class GoodsIssueListView extends ibas.BOListView implements IGoodsIssueLi
                             that.fireViewEvents(that.newDataEvent);
                         }
                     }),
+                    /*
                     new sap.m.Button("", {
                         text: ibas.i18n.prop("shell_data_view"),
                         type: sap.m.ButtonType.Transparent,
@@ -154,10 +104,11 @@ export class GoodsIssueListView extends ibas.BOListView implements IGoodsIssueLi
                         press: function (): void {
                             that.fireViewEvents(that.viewDataEvent,
                                 // 获取表格选中的对象
-                                openui5.utils.getTableSelecteds<bo.GoodsIssue>(that.table).firstOrDefault()
+                                openui5.utils.getSelecteds<bo.GoodsIssue>(that.table).firstOrDefault()
                             );
                         }
                     }),
+                    */
                     new sap.m.Button("", {
                         text: ibas.i18n.prop("shell_data_edit"),
                         type: sap.m.ButtonType.Transparent,
@@ -165,7 +116,7 @@ export class GoodsIssueListView extends ibas.BOListView implements IGoodsIssueLi
                         press: function (): void {
                             that.fireViewEvents(that.editDataEvent,
                                 // 获取表格选中的对象
-                                openui5.utils.getTableSelecteds<bo.GoodsIssue>(that.table).firstOrDefault()
+                                openui5.utils.getSelecteds<bo.GoodsIssue>(that.table).firstOrDefault()
                             );
                         }
                     }),
@@ -177,7 +128,7 @@ export class GoodsIssueListView extends ibas.BOListView implements IGoodsIssueLi
                         press: function (): void {
                             that.fireViewEvents(that.deleteDataEvent,
                                 // 获取表格选中的对象
-                                openui5.utils.getTableSelecteds<bo.GoodsIssue>(that.table)
+                                openui5.utils.getSelecteds<bo.GoodsIssue>(that.table)
                             );
                         }
                     }),
@@ -277,6 +228,6 @@ export class GoodsIssueListView extends ibas.BOListView implements IGoodsIssueLi
     }
     /** 获取选择的数据 */
     getSelecteds(): bo.GoodsIssue[] {
-        return openui5.utils.getTableSelecteds<bo.GoodsIssue>(this.table);
+        return openui5.utils.getSelecteds<bo.GoodsIssue>(this.table);
     }
 }

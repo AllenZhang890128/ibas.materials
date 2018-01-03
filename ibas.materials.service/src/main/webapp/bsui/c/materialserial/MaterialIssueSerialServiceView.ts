@@ -30,7 +30,7 @@ export class MaterialIssueSerialServiceView extends ibas.BODialogView implements
     /** 保存回调 */
     saveDataEvent: Function;
     // 控件
-    private mainLayout: sap.ui.layout.VerticalLayout;
+    private layoutMain: sap.ui.layout.VerticalLayout;
     private journalLineTable: sap.ui.table.Table;
     private leftTable: sap.ui.table.Table;
     private rightTable: sap.ui.table.Table;
@@ -46,7 +46,7 @@ export class MaterialIssueSerialServiceView extends ibas.BODialogView implements
             visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
             rowSelectionChange: function (): void {
                 that.fireViewEvents(that.selectMaterialSerialJournalLineEvent,
-                    openui5.utils.getTableSelecteds<MaterialIssueSerialJournal>(that.journalLineTable).firstOrDefault(), );
+                    openui5.utils.getSelecteds<MaterialIssueSerialJournal>(that.journalLineTable).firstOrDefault(), );
             },
             rows: "{/journallinedata}",
             columns: [
@@ -147,7 +147,7 @@ export class MaterialIssueSerialServiceView extends ibas.BODialogView implements
                                     text: ibas.i18n.prop("materials_app_autoselectbatch_by_firstinfirstout"),
                                     press: function (): void {
                                         that.fireViewEvents(that.autoSelectMaterialSerialEvent
-                                            , openui5.utils.getTableSelecteds<MaterialIssueSerialJournal>
+                                            , openui5.utils.getSelecteds<MaterialIssueSerialJournal>
                                                 (that.journalLineTable).firstOrDefault()
                                             , emAutoSelectBatchSerialRules.FIRST_IN_FIRST_OUT);
                                     }
@@ -156,7 +156,7 @@ export class MaterialIssueSerialServiceView extends ibas.BODialogView implements
                                     text: ibas.i18n.prop("materials_app_autoselectbatch_by_batchno"),
                                     press: function (): void {
                                         that.fireViewEvents(that.autoSelectMaterialSerialEvent
-                                            , openui5.utils.getTableSelecteds<MaterialIssueSerialJournal>
+                                            , openui5.utils.getSelecteds<MaterialIssueSerialJournal>
                                                 (that.journalLineTable).firstOrDefault()
                                             , emAutoSelectBatchSerialRules.ORDER_BY_CODE);
                                     }
@@ -170,8 +170,8 @@ export class MaterialIssueSerialServiceView extends ibas.BODialogView implements
                     press: function (): void {
                         that.fireViewEvents(that.removeSerialMaterialSerialEvent,
                             // 获取表格选中的对象
-                            openui5.utils.getTableSelecteds<MaterialIssueSerialJournal>(that.journalLineTable).firstOrDefault(),
-                            openui5.utils.getTableSelecteds<bo.MaterialBatchJournal>(that.rightTable),
+                            openui5.utils.getSelecteds<MaterialIssueSerialJournal>(that.journalLineTable).firstOrDefault(),
+                            openui5.utils.getSelecteds<bo.MaterialBatchJournal>(that.rightTable),
                         );
                     }
                 }),
@@ -180,8 +180,8 @@ export class MaterialIssueSerialServiceView extends ibas.BODialogView implements
                     press: function (): void {
                         that.fireViewEvents(that.addSerialMaterialSerialEvent,
                             // 获取表格选中的对象
-                            openui5.utils.getTableSelecteds<MaterialIssueSerialJournal>(that.journalLineTable).firstOrDefault(),
-                            openui5.utils.getTableSelecteds<bo.MaterialBatch>(that.leftTable),
+                            openui5.utils.getSelecteds<MaterialIssueSerialJournal>(that.journalLineTable).firstOrDefault(),
+                            openui5.utils.getSelecteds<bo.MaterialBatch>(that.leftTable),
                         );
                     }
                 })
@@ -219,7 +219,7 @@ export class MaterialIssueSerialServiceView extends ibas.BODialogView implements
                 }),
             ]
         });
-        this.mainLayout = new sap.ui.layout.VerticalLayout("", {
+        this.layoutMain = new sap.ui.layout.VerticalLayout("", {
             width: "750px",
             wrapping: false,
             content: [
@@ -227,7 +227,7 @@ export class MaterialIssueSerialServiceView extends ibas.BODialogView implements
                 this.splitter
             ]
         });
-        this.id = this.mainLayout.getId();
+        this.id = this.layoutMain.getId();
         return new sap.m.Dialog("", {
             title: this.title,
             type: sap.m.DialogType.Standard,
@@ -235,7 +235,7 @@ export class MaterialIssueSerialServiceView extends ibas.BODialogView implements
             stretchOnPhone: true,
             horizontalScrolling: true,
             verticalScrolling: true,
-            content: [this.mainLayout],
+            content: [this.layoutMain],
             buttons: [
                 new sap.m.Button("", {
                     text: ibas.i18n.prop("shell_confirm"),

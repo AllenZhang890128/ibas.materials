@@ -93,18 +93,6 @@ export class MaterialListView extends ibas.BOListView implements IMaterialListVi
                         path: "remarks",
                     }),
                 }),
-                new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("bo_material_createdate"),
-                    template: new sap.m.Text("", {
-                        wrapping: false,
-                    }).bindProperty("text", {
-                        path: "createDate",
-                        type: "sap.ui.model.type.Date",
-                        formatOptions: {
-                            style: "short"
-                        }
-                    }),
-                }),
             ],
         });
         this.form.addContent(this.table);
@@ -121,6 +109,7 @@ export class MaterialListView extends ibas.BOListView implements IMaterialListVi
                             that.fireViewEvents(that.newDataEvent);
                         }
                     }),
+                    /*
                     new sap.m.Button("", {
                         text: ibas.i18n.prop("shell_data_view"),
                         type: sap.m.ButtonType.Transparent,
@@ -129,10 +118,11 @@ export class MaterialListView extends ibas.BOListView implements IMaterialListVi
                         press: function (): void {
                             that.fireViewEvents(that.viewDataEvent,
                                 // 获取表格选中的对象
-                                openui5.utils.getTableSelecteds<bo.Material>(that.table).firstOrDefault()
+                                openui5.utils.getSelecteds<bo.Material>(that.table).firstOrDefault()
                             );
                         }
                     }),
+                    */
                     new sap.m.Button("", {
                         text: ibas.i18n.prop("shell_data_edit"),
                         type: sap.m.ButtonType.Transparent,
@@ -140,7 +130,7 @@ export class MaterialListView extends ibas.BOListView implements IMaterialListVi
                         press: function (): void {
                             that.fireViewEvents(that.editDataEvent,
                                 // 获取表格选中的对象
-                                openui5.utils.getTableSelecteds<bo.Material>(that.table).firstOrDefault()
+                                openui5.utils.getSelecteds<bo.Material>(that.table).firstOrDefault()
                             );
                         }
                     }),
@@ -152,7 +142,7 @@ export class MaterialListView extends ibas.BOListView implements IMaterialListVi
                         press: function (): void {
                             that.fireViewEvents(that.deleteDataEvent,
                                 // 获取表格选中的对象
-                                openui5.utils.getTableSelecteds<bo.Material>(that.table)
+                                openui5.utils.getSelecteds<bo.Material>(that.table)
                             );
                         }
                     }),
@@ -252,6 +242,6 @@ export class MaterialListView extends ibas.BOListView implements IMaterialListVi
     }
     /** 获取选择的数据 */
     getSelecteds(): bo.Material[] {
-        return openui5.utils.getTableSelecteds<bo.Material>(this.table);
+        return openui5.utils.getSelecteds<bo.Material>(this.table);
     }
 }

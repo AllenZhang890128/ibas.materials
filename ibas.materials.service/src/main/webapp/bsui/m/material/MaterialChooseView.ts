@@ -37,7 +37,7 @@ export class MaterialChooseView extends ibas.BOChooseView implements IMaterialCh
                 press: function (): void {
                     that.fireViewEvents(that.chooseDataEvent,
                         // 获取表格选中的对象
-                        openui5.utils.getTableSelecteds<bo.Material>(that.table)
+                        openui5.utils.getSelecteds<bo.Material>(that.table)
                     );
                 }
             }),
@@ -110,7 +110,7 @@ export class MaterialChooseView extends ibas.BOChooseView implements IMaterialCh
                     }),
                 }),
                 new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("bo_material_uom"),
+                    label: ibas.i18n.prop("bo_material_inventoryuom"),
                     template: new sap.m.Text("", {
                         wrapping: false,
                     }).bindProperty("text", {

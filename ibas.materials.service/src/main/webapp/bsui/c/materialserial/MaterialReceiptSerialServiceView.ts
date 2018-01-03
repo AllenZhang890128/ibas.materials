@@ -13,9 +13,11 @@
 import * as ibas from "ibas/index";
 import * as openui5 from "openui5/index";
 import * as bo from "../../../borep/bo/index";
-import { IMaterialReceiptSerialView,
-     MaterialReceiptSerialJournal,
-    MaterialReceiptSerialInfo } from "../../../bsapp/materialserial/index";
+import {
+    IMaterialReceiptSerialView,
+    MaterialReceiptSerialJournal,
+    MaterialReceiptSerialInfo
+} from "../../../bsapp/materialserial/index";
 
 export class MaterialReceiptSerialServiceView extends ibas.BODialogView implements IMaterialReceiptSerialView {
     /** 添加批次事件 */
@@ -27,7 +29,7 @@ export class MaterialReceiptSerialServiceView extends ibas.BODialogView implemen
     autoCreateSerialEvent: Function;
     /** 选中凭证行事件 */
     selectMaterialSerialJournalLineEvent: Function;
-    private mainLayout: sap.ui.layout.VerticalLayout;
+    private layoutMain: sap.ui.layout.VerticalLayout;
     private journalLineTable: sap.ui.table.Table;
 
     /** 绘制视图 */
@@ -41,7 +43,7 @@ export class MaterialReceiptSerialServiceView extends ibas.BODialogView implemen
                         type: sap.m.ButtonType.Transparent,
                         press: function (): void {
                             that.fireViewEvents(that.autoCreateSerialEvent,
-                                openui5.utils.getTableSelecteds<MaterialReceiptSerialJournal>(that.journalLineTable).firstOrDefault()
+                                openui5.utils.getSelecteds<MaterialReceiptSerialJournal>(that.journalLineTable).firstOrDefault()
                             );
                         }
                     }),
@@ -51,7 +53,7 @@ export class MaterialReceiptSerialServiceView extends ibas.BODialogView implemen
                         icon: "sap-icon://add",
                         press: function (): void {
                             that.fireViewEvents(that.addSerialEvent,
-                                openui5.utils.getTableSelecteds<MaterialReceiptSerialJournal>(that.journalLineTable).firstOrDefault());
+                                openui5.utils.getSelecteds<MaterialReceiptSerialJournal>(that.journalLineTable).firstOrDefault());
                         }
                     }),
                     new sap.m.Button("", {
@@ -60,8 +62,8 @@ export class MaterialReceiptSerialServiceView extends ibas.BODialogView implemen
                         icon: "sap-icon://less",
                         press: function (): void {
                             that.fireViewEvents(that.removeSerialEvent,
-                                openui5.utils.getTableSelecteds<MaterialReceiptSerialJournal>(that.journalLineTable).firstOrDefault(),
-                                openui5.utils.getTableSelecteds<bo.MaterialBatch>(that.table)
+                                openui5.utils.getSelecteds<MaterialReceiptSerialJournal>(that.journalLineTable).firstOrDefault(),
+                                openui5.utils.getSelecteds<bo.MaterialBatch>(that.table)
                             );
                         }
                     }),
@@ -89,7 +91,6 @@ export class MaterialReceiptSerialServiceView extends ibas.BODialogView implemen
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_materialserial_expirationdate"),
                     template: new sap.m.DatePicker("", {
-                        valueFormat: "yyyy-MM-dd",
                     }).bindProperty("dateValue", {
                         path: "expirationDate"
                     })
@@ -97,7 +98,6 @@ export class MaterialReceiptSerialServiceView extends ibas.BODialogView implemen
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_materialserial_manufacturingdate"),
                     template: new sap.m.DatePicker("", {
-                        valueFormat: "yyyy-MM-dd",
                     }).bindProperty("dateValue", {
                         path: "manufacturingDate"
                     })
@@ -105,7 +105,6 @@ export class MaterialReceiptSerialServiceView extends ibas.BODialogView implemen
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_materialserial_admissiondate"),
                     template: new sap.m.DatePicker("", {
-                        valueFormat: "yyyy-MM-dd",
                     }).bindProperty("dateValue", {
                         path: "admissionDate"
                     })
@@ -120,7 +119,7 @@ export class MaterialReceiptSerialServiceView extends ibas.BODialogView implemen
             visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
             rowSelectionChange: function (): void {
                 that.fireViewEvents(that.selectMaterialSerialJournalLineEvent,
-                    openui5.utils.getTableSelecteds<MaterialReceiptSerialJournal>(that.journalLineTable).firstOrDefault(), );
+                    openui5.utils.getSelecteds<MaterialReceiptSerialJournal>(that.journalLineTable).firstOrDefault(), );
             },
             rows: "{/journallinedata}",
             columns: [
@@ -177,13 +176,13 @@ export class MaterialReceiptSerialServiceView extends ibas.BODialogView implemen
                 }),
             ]
         });
-        this.mainLayout = new sap.ui.layout.VerticalLayout("", {
+        this.layoutMain = new sap.ui.layout.VerticalLayout("", {
             content: [
                 this.journalLineTable,
                 this.table
             ]
         });
-        this.id = this.mainLayout.getId();
+        this.id = this.layoutMain.getId();
         return new sap.m.Dialog("", {
             title: this.title,
             type: sap.m.DialogType.Standard,
@@ -191,7 +190,7 @@ export class MaterialReceiptSerialServiceView extends ibas.BODialogView implemen
             stretchOnPhone: true,
             horizontalScrolling: true,
             verticalScrolling: true,
-            content: [this.mainLayout],
+            content: [this.layoutMain],
             buttons: [
                 new sap.m.Button("", {
                     text: ibas.i18n.prop("shell_confirm"),
