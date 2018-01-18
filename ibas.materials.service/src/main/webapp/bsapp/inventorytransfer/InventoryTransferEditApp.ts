@@ -5,19 +5,8 @@
  * Use of this source code is governed by an Apache License, Version 2.0
  * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
  */
-
 import * as ibas from "ibas/index";
 import * as bo from "../../borep/bo/index";
-import {
-    IMaterialBatchJournal,
-    IMaterialSerialJournal,
-    IMaterialBatchContract,
-    IMaterialSerialContract,
-} from "../../api/bo/index";
-import {
-    MaterialIssueBatchServiceProxy,
-    MaterialIssueSerialServiceProxy,
-} from "../../api/Datas";
 import { BORepositoryMaterials } from "../../borep/BORepositories";
 
 /** 编辑应用-库存转储 */
@@ -116,16 +105,6 @@ export class InventoryTransferEditApp extends ibas.BOEditApplication<IInventoryT
     protected saveData(): void {
         let that: this = this;
         let boRepository: BORepositoryMaterials = new BORepositoryMaterials();
-        // 物料数量与批次数量不相等
-        if (!this.editData.inventoryTransferLines.checkBatchQuantity()) {
-            this.messages(ibas.emMessageType.ERROR, ibas.i18n.prop("materials_app_material_quantity_not_equal_batch_quantity"));
-            return;
-        }
-        if (!this.editData.inventoryTransferLines.checkSerialQuantity()) {
-            this.messages(ibas.emMessageType.ERROR, ibas.i18n.prop("materials_app_material_quantity_not_equal_serial_quantity"));
-            return;
-        }
-        // this.editData.inventoryTransferLines.createReceiptBatchAndSerial();
         boRepository.saveInventoryTransfer({
             beSaved: this.editData,
             onCompleted(opRslt: ibas.IOperationResult<bo.InventoryTransfer>): void {
@@ -239,12 +218,10 @@ export class InventoryTransferEditApp extends ibas.BOEditApplication<IInventoryT
         ibas.servicesManager.runChooseService<bo.Warehouse>({
             boCode: bo.Warehouse.BUSINESS_OBJECT_CODE,
             chooseType: ibas.emChooseType.SINGLE,
-            criteria: [
-                new ibas.Condition(bo.Warehouse.PROPERTY_DELETED_NAME, ibas.emConditionOperation.EQUAL, "N")
-            ],
+            criteria: bo.conditions.warehouse.create(),
             onCompleted(selecteds: ibas.List<bo.Warehouse>): void {
-                // 获取触发的对象
-                that.editData.fromWarehouse = selecteds.firstOrDefault().code;
+                let selected: bo.Warehouse = selecteds.firstOrDefault();
+                that.editData.fromWarehouse = selected.code;
             }
         });
     }
@@ -253,7 +230,7 @@ export class InventoryTransferEditApp extends ibas.BOEditApplication<IInventoryT
         let that: this = this;
         ibas.servicesManager.runChooseService<bo.Material>({
             boCode: bo.Material.BUSINESS_OBJECT_CODE,
-            criteria: that.getConditions(),
+            criteria: bo.conditions.material.create(),
             onCompleted(selecteds: ibas.List<bo.Material>): void {
                 // 获取触发的对象
                 let index: number = that.editData.inventoryTransferLines.indexOf(caller);
@@ -269,7 +246,9 @@ export class InventoryTransferEditApp extends ibas.BOEditApplication<IInventoryT
                     item.itemDescription = selected.name;
                     item.serialManagement = selected.serialManagement;
                     item.batchManagement = selected.batchManagement;
+                    item.warehouse = selected.defaultWarehouse;
                     item.quantity = 1;
+                    item.uom = selected.inventoryUOM;
                     item = null;
                 }
                 if (created) {
@@ -286,7 +265,6 @@ export class InventoryTransferEditApp extends ibas.BOEditApplication<IInventoryT
             boCode: bo.MaterialPriceList.BUSINESS_OBJECT_CODE,
             chooseType: ibas.emChooseType.SINGLE,
             criteria: [
-                // new ibas.Condition(bo.MaterialPriceList.Property_, ibas.emConditionOperation.EQUAL, "Y")
             ],
             onCompleted(selecteds: ibas.List<bo.MaterialPriceList>): void {
                 that.editData.priceList = selecteds.firstOrDefault().objectKey;
@@ -298,9 +276,8 @@ export class InventoryTransferEditApp extends ibas.BOEditApplication<IInventoryT
         let that: this = this;
         ibas.servicesManager.runChooseService<bo.Warehouse>({
             boCode: bo.Warehouse.BUSINESS_OBJECT_CODE,
-            criteria: [
-                new ibas.Condition(bo.Warehouse.PROPERTY_ACTIVATED_NAME, ibas.emConditionOperation.EQUAL, ibas.emYesNo.YES)
-            ],
+            chooseType: ibas.emChooseType.SINGLE,
+            criteria: bo.conditions.warehouse.create(),
             onCompleted(selecteds: ibas.List<bo.Warehouse>): void {
                 // 获取触发的对象
                 let index: number = that.editData.inventoryTransferLines.indexOf(caller);
@@ -324,88 +301,40 @@ export class InventoryTransferEditApp extends ibas.BOEditApplication<IInventoryT
     }
 
     chooseInventoryTransferLineMaterialBatch(): void {
-        let that: this = this;
-        if (ibas.strings.isEmpty(this.editData.fromWarehouse)) {
-            this.messages(ibas.emMessageType.INFORMATION, ibas.i18n.prop("bo_inventorytransferline_fromwarehouse_is_empty"));
-            return;
+        let contracts: ibas.ArrayList<bo.IMaterialBatchContract> = new ibas.ArrayList<bo.IMaterialBatchContract>();
+        for (let item of this.editData.inventoryTransferLines) {
+            contracts.add({
+                batchManagement: item.batchManagement,
+                itemCode: item.itemCode,
+                itemDescription: item.itemDescription,
+                warehouse: item.warehouse,
+                quantity: item.quantity,
+                uom: item.uom,
+                materialBatches: item.materialBatches
+            });
         }
-        let inventoryTransferLines: bo.InventoryTransferLine[] = this.editData.inventoryTransferLines
-            .filter(c => c.isDeleted === false
-                && !ibas.objects.isNull(c.lineStatus)
-                && c.batchManagement !== undefined
-                && c.batchManagement === ibas.emYesNo.YES
-                && !ibas.strings.isEmpty(c.itemCode)
-                && !ibas.strings.isEmpty(c.warehouse));
-        if (ibas.objects.isNull(inventoryTransferLines) || inventoryTransferLines.length === 0) {
-            this.messages(ibas.emMessageType.INFORMATION, ibas.i18n.prop("materials_app_no_matched_documentline_to_choose_batch"));
-            return;
-        }
-        // 调用批次选择服务
-        ibas.servicesManager.runApplicationService<IMaterialBatchContract[]>({
-            proxy: new MaterialIssueBatchServiceProxy(that.getBatchContract(inventoryTransferLines))
+        ibas.servicesManager.runApplicationService<bo.IMaterialBatchContract[]>({
+            proxy: new bo.MaterialBatchIssueServiceProxy(contracts)
         });
     }
     chooseInventoryTransferLineMaterialSerial(): void {
-        let that: this = this;
-        if (ibas.strings.isEmpty(this.editData.fromWarehouse)) {
-            this.messages(ibas.emMessageType.INFORMATION, ibas.i18n.prop("bo_inventorytransferline_fromwarehouse_is_empty"));
-            return;
+        let contracts: ibas.ArrayList<bo.IMaterialSerialContract> = new ibas.ArrayList<bo.IMaterialSerialContract>();
+        for (let item of this.editData.inventoryTransferLines) {
+            contracts.add({
+                serialManagement: item.serialManagement,
+                itemCode: item.itemCode,
+                itemDescription: item.itemDescription,
+                warehouse: item.warehouse,
+                quantity: item.quantity,
+                uom: item.uom,
+                materialSerials: item.materialSerials
+            });
         }
-        let inventoryTransferLine: bo.InventoryTransferLine[] = this.editData.inventoryTransferLines
-            .filter(c => c.isDeleted === false
-                && !ibas.objects.isNull(c.lineStatus)
-                && c.serialManagement !== undefined
-                && c.serialManagement === ibas.emYesNo.YES
-                && !ibas.strings.isEmpty(c.itemCode)
-                && !ibas.strings.isEmpty(c.warehouse));
-        if (ibas.objects.isNull(inventoryTransferLine) || inventoryTransferLine.length === 0) {
-            this.messages(ibas.emMessageType.INFORMATION, ibas.i18n.prop("materials_app_no_matched_documentline_to_choose_serial"));
-            return;
-        }
-        // 调用序列选择服务
-        ibas.servicesManager.runApplicationService<IMaterialSerialContract[]>({
-            proxy: new MaterialIssueSerialServiceProxy(that.getSerialContract(inventoryTransferLine))
+        ibas.servicesManager.runApplicationService<bo.IMaterialSerialContract[]>({
+            proxy: new bo.MaterialSerialIssueServiceProxy(contracts)
         });
     }
 
-    /** 获取行-批次服务契约信息 */
-    getBatchContract(inventoryTransferLines: bo.InventoryTransferLine[]): IMaterialBatchContract[] {
-        let contracts: IMaterialBatchContract[] = new ibas.ArrayList<IMaterialBatchContract>();
-        for (let item of inventoryTransferLines) {
-            contracts.push({
-                itemCode: item.itemCode,
-                warehouse: this.editData.fromWarehouse,
-                quantity: item.quantity,
-                materialBatchs: item.materialBatchs.filterReceiptBatch(),
-            });
-        }
-        return contracts;
-    }
-    /** 获取行-序列信息 */
-    getSerialContract(inventoryTransferLines: bo.InventoryTransferLine[]): IMaterialSerialContract[] {
-        let contracts: IMaterialSerialContract[] = new ibas.ArrayList<IMaterialSerialContract>();
-        for (let item of inventoryTransferLines) {
-            contracts.push({
-                itemCode: item.itemCode,
-                warehouse: this.editData.fromWarehouse,
-                quantity: item.quantity,
-                materialSerials: item.materialSerials.filterReceiptSerial(),
-            });
-        }
-        return contracts;
-    }
-    /** 获取物料的查询条件 */
-    getConditions(): ibas.ICondition[] {
-        let conditions: ibas.ICondition[] = new Array<ibas.Condition>();
-        conditions.push(new ibas.Condition(bo.Material.PROPERTY_DELETED_NAME, ibas.emConditionOperation.EQUAL, "N"));
-        if (!ibas.objects.isNull(this.editData.priceList)) {
-            conditions.push(new ibas.Condition(
-                bo.MaterialPriceList.PROPERTY_OBJECTKEY_NAME
-                , ibas.emConditionOperation.EQUAL
-                , this.editData.priceList));
-        }
-        return conditions;
-    }
 }
 /** 视图-库存转储 */
 export interface IInventoryTransferEditView extends ibas.IBOEditView {

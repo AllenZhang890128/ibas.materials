@@ -41,7 +41,7 @@ export class InventoryTransferEditView extends ibas.BOEditView implements IInven
         let formTop: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
             editable: true,
             content: [
-                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_general_information") }),
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_title_general") }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_inventorytransfer_docentry") }),
                 new sap.m.Input("", {
                     editable: false,
@@ -74,7 +74,7 @@ export class InventoryTransferEditView extends ibas.BOEditView implements IInven
                 new sap.m.Input("", {}).bindProperty("value", {
                     path: "reference2"
                 }),
-                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_status_information") }),
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_title_status") }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_inventorytransfer_documentstatus") }),
                 new sap.m.Select("", {
                     items: openui5.utils.createComboBoxItems(ibas.emDocumentStatus),
@@ -126,18 +126,19 @@ export class InventoryTransferEditView extends ibas.BOEditView implements IInven
                     }),
                     new sap.m.ToolbarSeparator(""),
                     new sap.m.MenuButton("", {
-                        text: ibas.strings.format("{0}/{1}", ibas.i18n.prop("materials_batch"), ibas.i18n.prop("materials_serial")),
+                        text: ibas.strings.format("{0}/{1}",
+                            ibas.i18n.prop("materials_material_batch"), ibas.i18n.prop("materials_material_serial")),
                         menu: [
                             new sap.m.Menu("", {
                                 items: [
                                     new sap.m.MenuItem("", {
-                                        text: ibas.i18n.prop("materials_batch"),
+                                        text: ibas.i18n.prop("materials_material_batch"),
                                         press: function (): void {
                                             that.fireViewEvents(that.chooseInventoryTransferLineMaterialBatchEvent);
                                         }
                                     }),
                                     new sap.m.MenuItem("", {
-                                        text: ibas.i18n.prop("materials_serial"),
+                                        text: ibas.i18n.prop("materials_material_serial"),
                                         press: function (): void {
                                             that.fireViewEvents(that.chooseInventoryTransferLineMaterialSerialEvent);
                                         }
@@ -188,10 +189,9 @@ export class InventoryTransferEditView extends ibas.BOEditView implements IInven
                 }),
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_inventorytransferline_itemdescription"),
-                    template: new sap.m.Input("", {
-                        width: "100%",
-                        editable: false,
-                    }).bindProperty("value", {
+                    template: new sap.m.Text("", {
+                        wrapping: false,
+                    }).bindProperty("text", {
                         path: "itemDescription"
                     })
                 }),
@@ -221,9 +221,10 @@ export class InventoryTransferEditView extends ibas.BOEditView implements IInven
                 }),
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_inventorytransferline_uom"),
-                    template: new sap.m.Input("", {
+                    template: new sap.m.Text("", {
                         width: "100%",
-                    }).bindProperty("value", {
+                        wrapping: false
+                    }).bindProperty("text", {
                         path: "uom"
                     })
                 }),
@@ -265,13 +266,13 @@ export class InventoryTransferEditView extends ibas.BOEditView implements IInven
         let formBottom: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
             editable: true,
             content: [
-                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_remarks_information") }),
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_title_remarks") }),
                 new sap.m.TextArea("", {
                     rows: 5,
                 }).bindProperty("value", {
                     path: "remarks",
                 }),
-                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_total_information") }),
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_title_total") }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_inventorytransfer_documenttotal") }),
                 new sap.m.Input("", {
                     editable: false,

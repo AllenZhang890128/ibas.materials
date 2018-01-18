@@ -89,11 +89,6 @@ export interface IBORepositoryMaterials extends IBORepositoryApplication {
      * @param fetcher 查询者
      */
     fetchMaterialInventory(fetcher: FetchCaller<bo.IMaterialInventory>);
-    /**
-     * 保存 物料库存
-     * @param saver 保存者
-     */
-    saveMaterialInventory(saver: SaveCaller<bo.IMaterialInventory>);
 
     /**
      * 查询 仓库日记账
@@ -131,17 +126,27 @@ export interface IBORepositoryMaterials extends IBORepositoryApplication {
      * @param saver 保存者
      */
     saveMaterialBatch(saver: SaveCaller<bo.IMaterialBatch>);
+    /**
+     * 查询 物料批次日记账
+     * @param fetcher 查询者
+     */
+    fetchMaterialBatchJournal(fetcher: FetchCaller<bo.IMaterialBatchJournal>);
 
     /**
-    * 查询 物料序列号
+    * 查询 物料序列
     * @param fetcher 查询者
     */
     fetchMaterialSerial(fetcher: FetchCaller<bo.IMaterialSerial>);
     /**
-     * 保存 物料序列号
+     * 保存 物料序列
      * @param saver 保存者
      */
     saveMaterialSerial(saver: SaveCaller<bo.IMaterialSerial>);
+    /**
+     * 查询 物料序列日记账
+     * @param fetcher 查询者
+     */
+    fetchMaterialSerialJournal(fetcher: FetchCaller<bo.IMaterialSerialJournal>);
 
     /**
     * 查询 物料价格清单

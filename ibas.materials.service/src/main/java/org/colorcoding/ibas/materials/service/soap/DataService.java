@@ -1,5 +1,9 @@
 package org.colorcoding.ibas.materials.service.soap;
 
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.cxf.WebServicePath;
@@ -7,10 +11,10 @@ import org.colorcoding.ibas.materials.bo.goodsissue.GoodsIssue;
 import org.colorcoding.ibas.materials.bo.goodsreceipt.GoodsReceipt;
 import org.colorcoding.ibas.materials.bo.inventorytransfer.InventoryTransfer;
 import org.colorcoding.ibas.materials.bo.material.Material;
+import org.colorcoding.ibas.materials.bo.material.MaterialGroup;
 import org.colorcoding.ibas.materials.bo.material.Product;
 import org.colorcoding.ibas.materials.bo.materialbatch.MaterialBatch;
 import org.colorcoding.ibas.materials.bo.materialbatch.MaterialBatchJournal;
-import org.colorcoding.ibas.materials.bo.materialgroup.MaterialGroup;
 import org.colorcoding.ibas.materials.bo.materialinventory.MaterialInventory;
 import org.colorcoding.ibas.materials.bo.materialinventory.MaterialInventoryJournal;
 import org.colorcoding.ibas.materials.bo.materialpricelist.MaterialPriceList;
@@ -18,10 +22,6 @@ import org.colorcoding.ibas.materials.bo.materialserial.MaterialSerial;
 import org.colorcoding.ibas.materials.bo.materialserial.MaterialSerialJournal;
 import org.colorcoding.ibas.materials.bo.warehouse.Warehouse;
 import org.colorcoding.ibas.materials.repository.BORepositoryMaterials;
-
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
 
 /**
  * Materials 数据服务JSON
@@ -201,21 +201,6 @@ public class DataService extends BORepositoryMaterials {
 		return super.fetchMaterialBatchJournal(criteria, token);
 	}
 
-	/**
-	 * 保存-物料批次日记账
-	 * 
-	 * @param bo
-	 *            对象实例
-	 * @param token
-	 *            口令
-	 * @return 操作结果
-	 */
-	@WebMethod
-	public OperationResult<MaterialBatchJournal> saveMaterialBatchJournal(
-			@WebParam(name = "bo") MaterialBatchJournal bo, @WebParam(name = "token") String token) {
-		return super.saveMaterialBatchJournal(bo, token);
-	}
-
 	// --------------------------------------------------------------------------------------------//
 	/**
 	 * 查询-物料组
@@ -263,21 +248,6 @@ public class DataService extends BORepositoryMaterials {
 		return super.fetchMaterialInventory(criteria, token);
 	}
 
-	/**
-	 * 保存-物料库存
-	 * 
-	 * @param bo
-	 *            对象实例
-	 * @param token
-	 *            口令
-	 * @return 操作结果
-	 */
-	@WebMethod
-	public OperationResult<MaterialInventory> saveMaterialInventory(@WebParam(name = "bo") MaterialInventory bo,
-			@WebParam(name = "token") String token) {
-		return super.saveMaterialInventory(bo, token);
-	}
-
 	// --------------------------------------------------------------------------------------------//
 	/**
 	 * 查询-仓库日记账
@@ -292,21 +262,6 @@ public class DataService extends BORepositoryMaterials {
 	public OperationResult<MaterialInventoryJournal> fetchMaterialInventoryJournal(
 			@WebParam(name = "criteria") Criteria criteria, @WebParam(name = "token") String token) {
 		return super.fetchMaterialInventoryJournal(criteria, token);
-	}
-
-	/**
-	 * 保存-仓库日记账
-	 * 
-	 * @param bo
-	 *            对象实例
-	 * @param token
-	 *            口令
-	 * @return 操作结果
-	 */
-	@WebMethod
-	public OperationResult<MaterialInventoryJournal> saveMaterialInventoryJournal(
-			@WebParam(name = "bo") MaterialInventoryJournal bo, @WebParam(name = "token") String token) {
-		return super.saveMaterialInventoryJournal(bo, token);
 	}
 
 	// --------------------------------------------------------------------------------------------//
@@ -342,7 +297,7 @@ public class DataService extends BORepositoryMaterials {
 
 	// --------------------------------------------------------------------------------------------//
 	/**
-	 * 查询-物料序列号
+	 * 查询-物料序列
 	 * 
 	 * @param criteria
 	 *            查询
@@ -357,7 +312,7 @@ public class DataService extends BORepositoryMaterials {
 	}
 
 	/**
-	 * 保存-物料序列号
+	 * 保存-物料序列
 	 * 
 	 * @param bo
 	 *            对象实例
@@ -373,7 +328,7 @@ public class DataService extends BORepositoryMaterials {
 
 	// --------------------------------------------------------------------------------------------//
 	/**
-	 * 查询-物料序列号日记账
+	 * 查询-物料序列日记账
 	 * 
 	 * @param criteria
 	 *            查询
@@ -385,21 +340,6 @@ public class DataService extends BORepositoryMaterials {
 	public OperationResult<MaterialSerialJournal> fetchMaterialSerialJournal(
 			@WebParam(name = "criteria") Criteria criteria, @WebParam(name = "token") String token) {
 		return super.fetchMaterialSerialJournal(criteria, token);
-	}
-
-	/**
-	 * 保存-物料序列号日记账
-	 * 
-	 * @param bo
-	 *            对象实例
-	 * @param token
-	 *            口令
-	 * @return 操作结果
-	 */
-	@WebMethod
-	public OperationResult<MaterialSerialJournal> saveMaterialSerialJournal(
-			@WebParam(name = "bo") MaterialSerialJournal bo, @WebParam(name = "token") String token) {
-		return super.saveMaterialSerialJournal(bo, token);
 	}
 
 	// --------------------------------------------------------------------------------------------//
@@ -432,6 +372,7 @@ public class DataService extends BORepositoryMaterials {
 			@WebParam(name = "token") String token) {
 		return super.saveWarehouse(bo, token);
 	}
+
 	// --------------------------------------------------------------------------------------------//
 	/**
 	 * 查询-物料扩展（仓库库存、单价）
@@ -443,8 +384,8 @@ public class DataService extends BORepositoryMaterials {
 	 * @return 操作结果
 	 */
 	@WebMethod
-	public OperationResult<Product> fetchProduct(
-			@WebParam(name = "criteria") Criteria criteria, @WebParam(name = "token") String token) {
+	public OperationResult<Product> fetchProduct(@WebParam(name = "criteria") Criteria criteria,
+			@WebParam(name = "token") String token) {
 		return super.fetchProduct(criteria, token);
 	}
 	// --------------------------------------------------------------------------------------------//

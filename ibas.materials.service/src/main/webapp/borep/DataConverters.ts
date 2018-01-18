@@ -47,7 +47,9 @@ class BOConverter4mm extends ibas.BOConverter {
         } else if (boName === bo.MaterialSerialJournal.name) {
             if (property === bo.MaterialSerialJournal.PROPERTY_DIRECTION_NAME) {
                 return ibas.enums.toString(ibas.emDirection, value);
-            } else if (property === bo.MaterialSerialJournal.PROPERTY_INSTOCK_NAME) {
+            }
+        } else if (boName === bo.MaterialSerial.name) {
+            if (property === bo.MaterialSerial.PROPERTY_INSTOCK_NAME) {
                 return ibas.enums.toString(ibas.emYesNo, value);
             }
         } else if (boName === bo.Material.name) {
@@ -62,15 +64,12 @@ class BOConverter4mm extends ibas.BOConverter {
             }
         } else if (boName === bo.Product.name) {
             if (property === bo.Product.PROPERTY_SERIALMANAGEMENT_NAME
-                || property === bo.Product.PROPERTY_FIXEDASSETS_NAME
                 || property === bo.Product.PROPERTY_BATCHMANAGEMENT_NAME
-                || property === bo.Product.PROPERTY_SALESITEM_NAME
-                || property === bo.Product.PROPERTY_PURCHASEITEM_NAME
                 || property === bo.Product.PROPERTY_INVENTORYITEM_NAME
                 || property === bo.Product.PROPERTY_PHANTOMITEM_NAME) {
                 return ibas.enums.toString(ibas.emYesNo, value);
             }
-        }else if (boName === bo.GoodsIssueLine.name) {
+        } else if (boName === bo.GoodsIssueLine.name) {
             if (property === bo.GoodsIssueLine.PROPERTY_SERIALMANAGEMENT_NAME
                 || property === bo.GoodsIssueLine.PROPERTY_BATCHMANAGEMENT_NAME) {
                 return ibas.enums.toString(ibas.emYesNo, value);
@@ -105,7 +104,9 @@ class BOConverter4mm extends ibas.BOConverter {
         } else if (boName === bo.MaterialSerialJournal.name) {
             if (property === bo.MaterialSerialJournal.PROPERTY_DIRECTION_NAME) {
                 return ibas.enums.valueOf(ibas.emDirection, value);
-            } else if (property === bo.MaterialSerialJournal.PROPERTY_INSTOCK_NAME) {
+            }
+        } else if (boName === bo.MaterialSerial.name) {
+            if (property === bo.MaterialSerial.PROPERTY_INSTOCK_NAME) {
                 return ibas.enums.valueOf(ibas.emYesNo, value);
             }
         } else if (boName === bo.Material.name) {
@@ -118,12 +119,9 @@ class BOConverter4mm extends ibas.BOConverter {
                 || property === bo.Material.PROPERTY_PHANTOMITEM_NAME) {
                 return ibas.enums.valueOf(ibas.emYesNo, value);
             }
-        }  else if (boName === bo.Product.name) {
+        } else if (boName === bo.Product.name) {
             if (property === bo.Product.PROPERTY_SERIALMANAGEMENT_NAME
-                || property === bo.Product.PROPERTY_FIXEDASSETS_NAME
                 || property === bo.Product.PROPERTY_BATCHMANAGEMENT_NAME
-                || property === bo.Product.PROPERTY_SALESITEM_NAME
-                || property === bo.Product.PROPERTY_PURCHASEITEM_NAME
                 || property === bo.Product.PROPERTY_INVENTORYITEM_NAME
                 || property === bo.Product.PROPERTY_PHANTOMITEM_NAME) {
                 return ibas.enums.valueOf(ibas.emYesNo, value);

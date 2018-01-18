@@ -20,6 +20,7 @@ import {
     BODocumentLine,
     BOSimple,
     enums,
+    numbers,
     BOSimpleLine,
     strings,
     config,
@@ -28,23 +29,13 @@ import {
 } from "ibas/index";
 import {
     IInventoryTransfer,
-    IInventoryTransferLineMaterialBatchJournals,
-    IInventoryTransferLineMaterialSerialJournals,
     IInventoryTransferLines,
     IInventoryTransferLine,
-    IMaterialBatchJournal,
-    IMaterialBatchJournals,
-    IMaterialSerialJournal,
-    IMaterialSerialJournals,
-    IBatchManagementLines,
-    ISerialManagementLines,
+    MaterialSerialItems,
+    MaterialBatchItems,
     BO_CODE_INVENTORYTRANSFER,
     emItemType,
 } from "../../api/index";
-import { MaterialBatchJournal, MaterialBatchJournals } from "./MaterialBatchJournal";
-import { MaterialSerialJournal, MaterialSerialJournals } from "./MaterialSerialJournal";
-import { BatchManagementLines } from "./BatchManagementLine";
-import { SerialManagementLines } from "./SerialManagementLine";
 /** 库存转储 */
 export class InventoryTransfer extends BODocument<InventoryTransfer> implements IInventoryTransfer {
 
@@ -456,167 +447,17 @@ export class InventoryTransfer extends BODocument<InventoryTransfer> implements 
     protected init(): void {
         this.inventoryTransferLines = new InventoryTransferLines(this);
         this.objectCode = config.applyVariables(InventoryTransfer.BUSINESS_OBJECT_CODE);
-        this.documentStatus = emDocumentStatus.PLANNED;
-    }
-}
-
-/** 库存转储-批次日记账 集合 */
-export class InventoryTransferLineMaterialBatchJournals extends BusinessObjects<IMaterialBatchJournal, InventoryTransferLine>
-    implements IInventoryTransferLineMaterialBatchJournals,
-    IMaterialBatchJournals {
-    constructor(parent: InventoryTransferLine) {
-        super(parent);
-        this.batchJournals = new MaterialBatchJournals<InventoryTransferLine>(this, parent);
-    }
-    batchJournals: IMaterialBatchJournals;
-    /**
-     * 创建批次日记账
-     * @param data
-     */
-    create(data?: any): IMaterialBatchJournal {
-        return this.batchJournals.create(data);
-    }
-    /**
-     * 删除批次日记账集合
-     */
-    deleteAll(): void {
-        this.batchJournals.deleteAll();
-    }
-    /**
-     * 移除批次日记账集合
-     */
-    removeAll(): void {
-        this.batchJournals.removeAll();
-    }
-    /**
-     * 父项属性发生改变
-     * @param name 属性名称
-     */
-    onParentPropertyChanged(name: string): void {
-        this.batchJournals.onParentPropertyChanged(name);
-    }
-    /**
-     * 去除入库批次
-     */
-    filterReceiptBatch(): InventoryTransferLineMaterialBatchJournals {
-        for (let item of this) {
-            if (item.warehouse === this.parent.warehouse) {
-                this.remove(item);
-            }
-        }
-        return this;
-    }
-}
-/** 库存转储-序列日记账 集合 */
-export class InventoryTransferLineMaterialSerialJournals extends BusinessObjects<IMaterialSerialJournal, InventoryTransferLine>
-    implements IInventoryTransferLineMaterialSerialJournals,
-    IMaterialSerialJournals {
-
-    constructor(parent: InventoryTransferLine) {
-        super(parent);
-        this.serialJournals = new MaterialSerialJournals<InventoryTransferLine>(this,parent);
-    }
-    serialJournals: IMaterialSerialJournals;
-
-    /**
-     * 创建序列日记账
-     * @param data
-     */
-    create(data?: any): IMaterialSerialJournal {
-        return this.serialJournals.create(data);
-    }
-    /**
-     * 删除序列日记账集合
-     */
-    deleteAll(): void {
-        this.serialJournals.deleteAll();
-    }
-    /**
-     * 移除序列日记账集合
-     */
-    removeAll(): void {
-        this.serialJournals.removeAll();
-    }
-    /**
-     * 监听父项属性改变
-     * @param name 父项属性名称
-     */
-    onParentPropertyChanged(name: string): void {
-        super.onParentPropertyChanged(name);
-        this.serialJournals.onParentPropertyChanged(name);
-    }
-
-    filterReceiptSerial(): InventoryTransferLineMaterialSerialJournals {
-        for (let item of this) {
-            if (item.warehouse === this.parent.warehouse) {
-                this.remove(item);
-            }
-        }
-        return this;
+        this.documentStatus = emDocumentStatus.RELEASED;
     }
 }
 /** 库存转储-行 集合 */
-export class InventoryTransferLines
-    extends BusinessObjects<InventoryTransferLine, InventoryTransfer>
-    implements IInventoryTransferLines,
-    IBatchManagementLines,
-    ISerialManagementLines {
-    constructor(parent: InventoryTransfer) {
-        super(parent);
-        this.batchManagementLines = new BatchManagementLines(this);
-        this.serialManagementLines = new SerialManagementLines(this);
-    }
-    batchManagementLines: IBatchManagementLines;
-    serialManagementLines: ISerialManagementLines;
-
-    checkBatchQuantity(): boolean {
-        return this.batchManagementLines.checkBatchQuantity();
-    }
-
-    checkSerialQuantity(): boolean {
-        return this.serialManagementLines.checkSerialQuantity();
-    }
-
+export class InventoryTransferLines extends BusinessObjects<InventoryTransferLine, InventoryTransfer> implements IInventoryTransferLines {
     /** 创建并添加子项 */
     create(): InventoryTransferLine {
         let item: InventoryTransferLine = new InventoryTransferLine();
         this.add(item);
         return item;
     }
-    afterAdd(item: InventoryTransferLine): void {
-        super.afterAdd(item);
-        item.lineStatus = this.parent.documentStatus;
-    }
-
-    /**
-     * 创建入库批次序列
-     */
-    createReceiptBatchAndSerial(): void {
-        for (let item of this) {
-            if (item.materialBatchs.length !== 0) {
-                let batchs: ArrayList<IMaterialBatchJournal> = new ArrayList<IMaterialBatchJournal>();
-                for (let batch of item.materialBatchs.filter(c => c.warehouse === this.parent.fromWarehouse)) {
-                    // let journal: MaterialBatchJournal = batch.clone();
-                    // journal.warehouse = item.warehouse;
-                    // journal.direction = emDirection.IN;
-                    // batchs.add(journal);
-                }
-                batchs.forEach(c => item.materialBatchs.create(c));
-            }
-            if (item.materialSerials.length !== 0) {
-                let serials: ArrayList<MaterialSerialJournal> = new ArrayList<MaterialSerialJournal>();
-                for (let serial of item.materialSerials.filter(c => c.warehouse === this.parent.fromWarehouse)) {
-                    // let journal: MaterialSerialJournal = serial.clone();
-                    // journal.warehouse = item.warehouse;
-                    // journal.direction = emDirection.IN;
-                    // serials.add(journal);
-                }
-                serials.forEach(c => item.materialSerials.create(c));
-            }
-        }
-    }
-
-
 }
 
 /** 库存转储-行 */
@@ -1032,34 +873,33 @@ export class InventoryTransferLine extends BODocumentLine<InventoryTransferLine>
     set project(value: string) {
         this.setProperty(InventoryTransferLine.PROPERTY_PROJECT_NAME, value);
     }
-    /** 映射的属性名称-库存发货-行-序列号集合 */
-    static PROPERTY_INVENTORYTRANSFERMATERIALSERIALJOURNALS_NAME: string = "InventoryTransferMaterialSerialJournals";
-    /** 获取-库存发货-行-序列号集合 */
-    get materialSerials(): InventoryTransferLineMaterialSerialJournals {
-        return this.getProperty<InventoryTransferLineMaterialSerialJournals>
-            (InventoryTransferLine.PROPERTY_INVENTORYTRANSFERMATERIALSERIALJOURNALS_NAME);
+
+    /** 映射的属性名称-物料批次集合 */
+    static PROPERTY_MATERIALBATCHES_NAME: string = "MaterialBatches";
+    /** 获取-物料批次集合 */
+    get materialBatches(): MaterialBatchItems {
+        return this.getProperty<MaterialBatchItems>(InventoryTransferLine.PROPERTY_MATERIALBATCHES_NAME);
     }
-    /** 设置-库存发货-行-序列号集合 */
-    set materialSerials(value: InventoryTransferLineMaterialSerialJournals) {
-        this.setProperty(InventoryTransferLine.PROPERTY_INVENTORYTRANSFERMATERIALSERIALJOURNALS_NAME, value);
-    }
-    /** 映射的属性名称-库存发货-行-批次集合 */
-    static PROPERTY_INVENTORYTRANSFERMATERIALBATCHJOURNALS_NAME: string = "InventoryTransferMaterialBatchJournals";
-    /** 获取-库存发货-行-序列号集合 */
-    get materialBatchs(): InventoryTransferLineMaterialBatchJournals {
-        return this.getProperty<InventoryTransferLineMaterialBatchJournals>
-            (InventoryTransferLine.PROPERTY_INVENTORYTRANSFERMATERIALBATCHJOURNALS_NAME);
-    }
-    /** 设置-库存发货-行-序列号集合 */
-    set materialBatchs(value: InventoryTransferLineMaterialBatchJournals) {
-        this.setProperty(InventoryTransferLine.PROPERTY_INVENTORYTRANSFERMATERIALBATCHJOURNALS_NAME, value);
+    /** 设置-物料批次集合 */
+    set materialBatches(value: MaterialBatchItems) {
+        this.setProperty(InventoryTransferLine.PROPERTY_MATERIALBATCHES_NAME, value);
     }
 
+    /** 映射的属性名称-物料序列集合 */
+    static PROPERTY_MATERIALSERIALS_NAME: string = "MaterialSerials";
+    /** 获取-物料序列集合 */
+    get materialSerials(): MaterialSerialItems {
+        return this.getProperty<MaterialSerialItems>(InventoryTransferLine.PROPERTY_MATERIALSERIALS_NAME);
+    }
+    /** 设置-物料序列集合 */
+    set materialSerials(value: MaterialSerialItems) {
+        this.setProperty(InventoryTransferLine.PROPERTY_MATERIALSERIALS_NAME, value);
+    }
 
     /** 初始化数据 */
     protected init(): void {
-        this.materialBatchs = new InventoryTransferLineMaterialBatchJournals(this);
-        this.materialSerials = new InventoryTransferLineMaterialSerialJournals(this);
+        this.materialBatches = new MaterialBatchItems(this);
+        this.materialSerials = new MaterialSerialItems(this);
         this.objectCode = config.applyVariables(InventoryTransfer.BUSINESS_OBJECT_CODE);
     }
 }

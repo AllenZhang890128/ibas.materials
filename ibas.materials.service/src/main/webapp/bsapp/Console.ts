@@ -17,11 +17,11 @@ import { MaterialFunc, MaterialChooseServiceMapping, MaterialLinkServiceMapping,
 import { MaterialGroupFunc, MaterialGroupChooseServiceMapping, MaterialGroupLinkServiceMapping } from "./materialgroup/index";
 import { WarehouseFunc, WarehouseChooseServiceMapping, WarehouseLinkServiceMapping } from "./warehouse/index";
 import {
-    MaterialReceiptBatchServiceMapping, MaterialIssueBatchServiceMapping,
+    MaterialBatchReceiptServiceMapping, MaterialBatchIssueServiceMapping,
     MaterialBatchFunc, MaterialBatchChooseServiceMapping
 } from "./materialbatch/index";
 import {
-    MaterialReceiptSerialServiceMapping, MaterialIssueSerialServiceMapping,
+    MaterialSerialReceiptServiceMapping, MaterialSerialIssueServiceMapping,
     MaterialSerialFunc, MaterialSerialChooseServiceMapping
 } from "./materialserial/index";
 import { MaterialPriceListChooseServiceMapping } from "./materialpricelist/index";
@@ -65,10 +65,10 @@ export class Console extends ibas.ModuleConsole {
         this.register(new WarehouseChooseServiceMapping());
         this.register(new WarehouseLinkServiceMapping());
         this.register(new ProductChooseServiceMapping());
-        this.register(new MaterialReceiptBatchServiceMapping);
-        this.register(new MaterialIssueBatchServiceMapping);
-        this.register(new MaterialReceiptSerialServiceMapping);
-        this.register(new MaterialIssueSerialServiceMapping);
+        this.register(new MaterialBatchReceiptServiceMapping);
+        this.register(new MaterialBatchIssueServiceMapping);
+        this.register(new MaterialSerialReceiptServiceMapping);
+        this.register(new MaterialSerialIssueServiceMapping);
         this.register(new MaterialPriceListChooseServiceMapping);
         this.register(new MaterialSerialChooseServiceMapping);
         this.register(new MaterialBatchChooseServiceMapping);
@@ -86,14 +86,15 @@ export class Console extends ibas.ModuleConsole {
         ibas.i18n.load(this.rootUrl + "resources/languages/bo/material.json");
         ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialgroup.json");
         ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialinventory.json");
-        ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialjournal.json");
+        ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialinventoryjournal.json");
         ibas.i18n.load(this.rootUrl + "resources/languages/bo/warehouse.json");
-        ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialex.json");
         ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialpricelist.json");
         ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialbatch.json");
         ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialserial.json");
         ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialbatchjournal.json");
         ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialserialjournal.json");
+        ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialbatchitem.json");
+        ibas.i18n.load(this.rootUrl + "resources/languages/bo/materialserialitem.json");
         // 设置资源属性
         this.description = ibas.i18n.prop(this.name.toLowerCase());
         this.icon = ibas.i18n.prop(this.name.toLowerCase() + "_icon");

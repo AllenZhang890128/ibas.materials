@@ -6,9 +6,7 @@
  * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
  */
 export * from "./MaterialBatchFunc";
-export * from "./MaterialIssueBatchService";
-export * from "./MaterialReceiptBatchService";
+export * from "./MaterialBatchService";
 export * from "./MaterialBatchListApp";
 export * from "./MaterialBatchViewApp";
 export * from "./MaterialBatchChooseApp";
-export * from "./batchjournal/MaterialBatchServiceJournal";

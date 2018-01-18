@@ -29,10 +29,10 @@ export class GoodsReceiptEditView extends ibas.BOEditView implements IGoodsRecei
     chooseGoodsReceiptLineMaterialEvent: Function;
     /** 选择库存收货单行仓库事件 */
     chooseGoodsReceiptlineWarehouseEvent: Function;
-    /** 新建库存收货单行物料序列事件 */
-    createGoodsReceiptLineMaterialSerialEvent: Function;
-    /** 新建库存收货单行物料批次事件 */
-    createGoodsReceiptLineMaterialBatchEvent: Function;
+    /** 选择库存收货单行物料序列事件 */
+    chooseGoodsReceiptLineMaterialSerialEvent: Function;
+    /** 选择库存收货单行物料批次事件 */
+    chooseGoodsReceiptLineMaterialBatchEvent: Function;
 
     /** 绘制视图 */
     darw(): any {
@@ -40,7 +40,7 @@ export class GoodsReceiptEditView extends ibas.BOEditView implements IGoodsRecei
         let formTop: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
             editable: true,
             content: [
-                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_general_information") }),
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_title_general") }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_goodsreceipt_docentry") }),
                 new sap.m.Input("", {
                     editable: false,
@@ -64,7 +64,7 @@ export class GoodsReceiptEditView extends ibas.BOEditView implements IGoodsRecei
                 new sap.m.Input("", {}).bindProperty("value", {
                     path: "reference2"
                 }),
-                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_status_information") }),
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_title_status") }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_goodsreceipt_documentstatus") }),
                 new sap.m.Select("", {
                     items: openui5.utils.createComboBoxItems(ibas.emDocumentStatus),
@@ -116,20 +116,21 @@ export class GoodsReceiptEditView extends ibas.BOEditView implements IGoodsRecei
                     }),
                     new sap.m.ToolbarSeparator(""),
                     new sap.m.MenuButton("", {
-                        text: ibas.strings.format("{0}/{1}", ibas.i18n.prop("materials_batch"), ibas.i18n.prop("materials_serial")),
+                        text: ibas.strings.format("{0}/{1}",
+                            ibas.i18n.prop("materials_material_batch"), ibas.i18n.prop("materials_material_serial")),
                         menu: [
                             new sap.m.Menu("", {
                                 items: [
                                     new sap.m.MenuItem("", {
-                                        text: ibas.i18n.prop("materials_batch"),
+                                        text: ibas.i18n.prop("materials_material_batch"),
                                         press: function (): void {
-                                            that.fireViewEvents(that.createGoodsReceiptLineMaterialBatchEvent);
+                                            that.fireViewEvents(that.chooseGoodsReceiptLineMaterialBatchEvent);
                                         }
                                     }),
                                     new sap.m.MenuItem("", {
-                                        text: ibas.i18n.prop("materials_serial"),
+                                        text: ibas.i18n.prop("materials_material_serial"),
                                         press: function (): void {
-                                            that.fireViewEvents(that.createGoodsReceiptLineMaterialSerialEvent);
+                                            that.fireViewEvents(that.chooseGoodsReceiptLineMaterialSerialEvent);
                                         }
                                     }),
                                 ]
@@ -178,10 +179,9 @@ export class GoodsReceiptEditView extends ibas.BOEditView implements IGoodsRecei
                 }),
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_goodsreceiptline_itemdescription"),
-                    template: new sap.m.Input("", {
-                        width: "100%",
-                        editable: false,
-                    }).bindProperty("value", {
+                    template: new sap.m.Text("", {
+                        wrapping: false,
+                    }).bindProperty("text", {
                         path: "itemDescription"
                     })
                 }),
@@ -211,9 +211,10 @@ export class GoodsReceiptEditView extends ibas.BOEditView implements IGoodsRecei
                 }),
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_goodsreceiptline_uom"),
-                    template: new sap.m.Input("", {
+                    template: new sap.m.Text("", {
                         width: "100%",
-                    }).bindProperty("value", {
+                        wrapping: false
+                    }).bindProperty("text", {
                         path: "uom"
                     })
                 }),
@@ -255,13 +256,13 @@ export class GoodsReceiptEditView extends ibas.BOEditView implements IGoodsRecei
         let formBottom: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
             editable: true,
             content: [
-                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_remarks_information") }),
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_title_remarks") }),
                 new sap.m.TextArea("", {
                     rows: 5,
                 }).bindProperty("value", {
                     path: "remarks",
                 }),
-                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_total_information") }),
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("materials_title_total") }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_goodsreceipt_documenttotal") }),
                 new sap.m.Input("", {
                     editable: false,

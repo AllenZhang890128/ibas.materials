@@ -110,9 +110,6 @@ export default class Navigation extends ibas.ViewNavigation {
             case materialinventoryApps.MaterialInventoryViewApp.APPLICATION_ID:
                 view = new materialinventoryViews.MaterialInventoryViewView();
                 break;
-            case materialinventoryApps.MaterialInventoryEditApp.APPLICATION_ID:
-                view = new materialinventoryViews.MaterialInventoryEditView();
-                break;
             case materialinventoryjournalApps.MaterialJournalListApp.APPLICATION_ID:
                 view = new materialinventoryjournalViews.MaterialInventoryJournalListView();
                 break;
@@ -140,17 +137,17 @@ export default class Navigation extends ibas.ViewNavigation {
             case materialApps.ProductChooseApp.APPLICATION_ID:
                 view = new materialViews.ProductChooseView();
                 break;
-            case materialbatchApps.MaterialReceiptBatchService.APPLICATION_ID:
-                view = new materialbatchViews.MaterialReceiptBatchServiceView();
+            case materialbatchApps.MaterialBatchReceiptService.APPLICATION_ID:
+                view = new materialbatchViews.MaterialBatchReceiptView();
                 break;
-            case materialbatchApps.MaterialIssueBatchService.APPLICATION_ID:
-                view = new materialbatchViews.MaterialIssueBatchServiceView();
+            case materialbatchApps.MaterialBatchIssueService.APPLICATION_ID:
+                view = new materialbatchViews.MaterialBatchIssueView();
                 break;
-            case materialserialApps.MaterialIssueSerialService.APPLICATION_ID:
-                view = new materialserialViews.MaterialIssueSerialServiceView();
+            case materialserialApps.MaterialSerialIssueService.APPLICATION_ID:
+                view = new materialserialViews.MaterialSerialIssueView();
                 break;
-            case materialserialApps.MaterialReceiptSerialService.APPLICATION_ID:
-                view = new materialserialViews.MaterialReceiptSerialServiceView();
+            case materialserialApps.MaterialSerialReceiptService.APPLICATION_ID:
+                view = new materialserialViews.MaterialSerialReceiptView();
                 break;
             case materialserialApps.MaterialSerialListApp.APPLICATION_ID:
                 view = new materialserialViews.MaterialSerialListView();

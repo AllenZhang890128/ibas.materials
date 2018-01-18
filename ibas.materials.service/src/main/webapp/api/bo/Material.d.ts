@@ -23,13 +23,10 @@ import {
 import {
     emItemType,
 } from "../Datas";
-import {
-    IMaterialBase
-} from "./index";
 /** 物料 */
-export interface IMaterial extends IMaterialBase {
+export interface IMaterial extends IBOMasterData {
 
-    /** 编号 */
+    /** 编码 */
     code: string;
 
     /** 名称 */
@@ -40,6 +37,9 @@ export interface IMaterial extends IMaterialBase {
 
     /** 物料组 */
     group: string;
+
+    /** 激活 */
+    activated: emYesNo;
 
     /** 条形码 */
     barCode: string;
@@ -86,6 +86,12 @@ export interface IMaterial extends IMaterialBase {
     /** 最低库存量 */
     minimumInventory: number;
 
+    /** 序号管理 */
+    serialManagement: emYesNo;
+
+    /** 批号管理 */
+    batchManagement: emYesNo;
+
     /** 生效日期 */
     validDate: Date;
 
@@ -100,6 +106,9 @@ export interface IMaterial extends IMaterialBase {
 
     /** 已引用 */
     referenced: emYesNo;
+
+    /** 已删除 */
+    deleted: emYesNo;
 
     /** 对象编号 */
     docEntry: number;

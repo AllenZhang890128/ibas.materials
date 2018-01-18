@@ -1,7 +1,11 @@
 package org.colorcoding.ibas.materials.test.bo;
 
-import junit.framework.TestCase;
-import org.colorcoding.ibas.bobas.common.*;
+import org.colorcoding.ibas.bobas.common.ConditionOperation;
+import org.colorcoding.ibas.bobas.common.ConditionRelationship;
+import org.colorcoding.ibas.bobas.common.Criteria;
+import org.colorcoding.ibas.bobas.common.ICondition;
+import org.colorcoding.ibas.bobas.common.ICriteria;
+import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.emDirection;
 import org.colorcoding.ibas.bobas.data.emDocumentStatus;
@@ -9,14 +13,18 @@ import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.materials.bo.goodsreceipt.GoodsReceipt;
 import org.colorcoding.ibas.materials.bo.goodsreceipt.IGoodsReceiptLine;
+import org.colorcoding.ibas.materials.bo.material.IMaterial;
 import org.colorcoding.ibas.materials.bo.material.Material;
-import org.colorcoding.ibas.materials.bo.materialbatch.IMaterialBatchJournal;
+import org.colorcoding.ibas.materials.bo.materialbatch.IMaterialBatchItem;
 import org.colorcoding.ibas.materials.bo.materialinventory.MaterialInventory;
 import org.colorcoding.ibas.materials.bo.materialinventory.MaterialInventoryJournal;
-import org.colorcoding.ibas.materials.bo.materialserial.IMaterialSerialJournal;
+import org.colorcoding.ibas.materials.bo.materialserial.IMaterialSerialItem;
+import org.colorcoding.ibas.materials.bo.warehouse.IWarehouse;
 import org.colorcoding.ibas.materials.bo.warehouse.Warehouse;
 import org.colorcoding.ibas.materials.repository.BORepositoryMaterials;
 import org.colorcoding.ibas.materials.repository.IBORepositoryMaterialsApp;
+
+import junit.framework.TestCase;
 
 /**
  * 库存收货 测试
@@ -36,24 +44,6 @@ public class testGoodsReceipt extends TestCase {
 	 * @throws Exception
 	 */
 	public void testBasicItems() throws Exception {
-		GoodsReceipt bo = new GoodsReceipt();
-		// 测试属性赋值
-
-		// 测试库存收货-行
-		IGoodsReceiptLine goodsreceiptline = bo.getGoodsReceiptLines().create();
-		// 测试属性赋值
-		goodsreceiptline.setItemCode("1000001");
-		goodsreceiptline.setQuantity(1000);
-		goodsreceiptline.setWarehouse("BJKJ");
-		IMaterialBatchJournal goodsreceiptBatch = goodsreceiptline.getMaterialBatchJournals().create();
-		goodsreceiptBatch.setQuantity(10);
-		goodsreceiptBatch.setItemCode("A0001");
-		goodsreceiptBatch.setWarehouse("BJKJ");
-		IMaterialSerialJournal goodsreceiptlineSerial = goodsreceiptline.getMaterialSerialJournals()
-				.create();
-		goodsreceiptlineSerial.setSerialCode("10001");
-		goodsreceiptlineSerial.setItemCode("A0002");
-		goodsreceiptlineSerial.setWarehouse("BJKJ");
 
 		// 测试对象的保存和查询
 		IOperationResult<?> operationResult = null;
@@ -61,6 +51,44 @@ public class testGoodsReceipt extends TestCase {
 		IBORepositoryMaterialsApp boRepository = new BORepositoryMaterials();
 		// 设置用户口令
 		boRepository.setUserToken(this.getToken());
+
+		IMaterial bMaterial = new testMaterial().create();
+		bMaterial.setBatchManagement(emYesNo.YES);
+		operationResult = boRepository.saveMaterial(bMaterial);
+		assertEquals(operationResult.getMessage(), operationResult.getResultCode(), 0);
+		IMaterial sMaterial = new testMaterial().create();
+		sMaterial.setSerialManagement(emYesNo.YES);
+		operationResult = boRepository.saveMaterial(sMaterial);
+		assertEquals(operationResult.getMessage(), operationResult.getResultCode(), 0);
+		IWarehouse warehouse = new testWarehouse().create();
+		operationResult = boRepository.saveWarehouse(warehouse);
+		assertEquals(operationResult.getMessage(), operationResult.getResultCode(), 0);
+
+		GoodsReceipt bo = new GoodsReceipt();
+		// 批次物料
+		IGoodsReceiptLine batchLine = bo.getGoodsReceiptLines().create();
+		batchLine.setItemCode(bMaterial.getCode());
+		batchLine.setBatchManagement(bMaterial.getBatchManagement());
+		batchLine.setSerialManagement(bMaterial.getSerialManagement());
+		batchLine.setQuantity(100);
+		batchLine.setWarehouse(warehouse.getCode());
+		IMaterialBatchItem batchItem = batchLine.getMaterialBatches().create();
+		batchItem.setQuantity(78);
+		batchItem.setBatchCode("B00001");
+		batchItem = batchLine.getMaterialBatches().create();
+		batchItem.setQuantity(22);
+		batchItem.setBatchCode("B00001");
+		// 序列编码物料
+		IGoodsReceiptLine serialLine = bo.getGoodsReceiptLines().create();
+		serialLine.setItemCode(sMaterial.getCode());
+		serialLine.setBatchManagement(sMaterial.getBatchManagement());
+		serialLine.setSerialManagement(sMaterial.getSerialManagement());
+		serialLine.setQuantity(2);
+		serialLine.setWarehouse(warehouse.getCode());
+		IMaterialSerialItem serialItem = serialLine.getMaterialSerials().create();
+		serialItem.setSerialCode("S00001");
+		serialItem = serialLine.getMaterialSerials().create();
+		serialItem.setSerialCode("S00002");
 
 		// 测试保存
 		operationResult = boRepository.saveGoodsReceipt(bo);
@@ -73,6 +101,10 @@ public class testGoodsReceipt extends TestCase {
 		operationResult = boRepository.fetchGoodsReceipt(criteria);
 		assertEquals(operationResult.getMessage(), operationResult.getResultCode(), 0);
 
+		// 测试删除
+		boSaved.delete();
+		operationResult = boRepository.saveGoodsReceipt(boSaved);
+		assertEquals(operationResult.getMessage(), operationResult.getResultCode(), 0);
 	}
 
 	public void testLogic() throws Exception {

@@ -7,12 +7,12 @@ import org.colorcoding.ibas.materials.bo.goodsissue.IGoodsIssue;
 import org.colorcoding.ibas.materials.bo.goodsreceipt.IGoodsReceipt;
 import org.colorcoding.ibas.materials.bo.inventorytransfer.IInventoryTransfer;
 import org.colorcoding.ibas.materials.bo.material.IMaterial;
+import org.colorcoding.ibas.materials.bo.material.IMaterialGroup;
 import org.colorcoding.ibas.materials.bo.material.IProduct;
 import org.colorcoding.ibas.materials.bo.material.MaterialPrice;
 import org.colorcoding.ibas.materials.bo.material.MaterialQuantity;
 import org.colorcoding.ibas.materials.bo.materialbatch.IMaterialBatch;
 import org.colorcoding.ibas.materials.bo.materialbatch.IMaterialBatchJournal;
-import org.colorcoding.ibas.materials.bo.materialgroup.IMaterialGroup;
 import org.colorcoding.ibas.materials.bo.materialinventory.IMaterialInventory;
 import org.colorcoding.ibas.materials.bo.materialinventory.IMaterialInventoryJournal;
 import org.colorcoding.ibas.materials.bo.materialpricelist.IMaterialPriceList;
@@ -130,15 +130,6 @@ public interface IBORepositoryMaterialsApp extends IBORepositoryApplication {
 	 */
 	IOperationResult<IMaterialInventory> fetchMaterialInventory(ICriteria criteria);
 
-	/**
-	 * 保存-物料库存
-	 * 
-	 * @param bo
-	 *            对象实例
-	 * @return 操作结果
-	 */
-	IOperationResult<IMaterialInventory> saveMaterialInventory(IMaterialInventory bo);
-
 	// --------------------------------------------------------------------------------------------//
 	/**
 	 * 查询-仓库日记账
@@ -206,18 +197,9 @@ public interface IBORepositoryMaterialsApp extends IBORepositoryApplication {
 	 */
 	IOperationResult<IMaterialBatchJournal> fetchMaterialBatchJournal(ICriteria criteria);
 
-	/**
-	 * 保存-物料批次日记账
-	 * 
-	 * @param bo
-	 *            对象实例
-	 * @return 操作结果
-	 */
-	IOperationResult<IMaterialBatchJournal> saveMaterialBatchJournal(IMaterialBatchJournal bo);
-
 	// --------------------------------------------------------------------------------------------//
 	/**
-	 * 查询-物料序列号
+	 * 查询-物料序列
 	 * 
 	 * @param criteria
 	 *            查询
@@ -226,7 +208,7 @@ public interface IBORepositoryMaterialsApp extends IBORepositoryApplication {
 	IOperationResult<IMaterialSerial> fetchMaterialSerial(ICriteria criteria);
 
 	/**
-	 * 保存-物料序列号
+	 * 保存-物料序列
 	 * 
 	 * @param bo
 	 *            对象实例
@@ -236,22 +218,13 @@ public interface IBORepositoryMaterialsApp extends IBORepositoryApplication {
 
 	// --------------------------------------------------------------------------------------------//
 	/**
-	 * 查询-物料序列号日记账
+	 * 查询-物料序列日记账
 	 * 
 	 * @param criteria
 	 *            查询
 	 * @return 操作结果
 	 */
 	IOperationResult<IMaterialSerialJournal> fetchMaterialSerialJournal(ICriteria criteria);
-
-	/**
-	 * 保存-物料序列号日记账
-	 * 
-	 * @param bo
-	 *            对象实例
-	 * @return 操作结果
-	 */
-	IOperationResult<IMaterialSerialJournal> saveMaterialSerialJournal(IMaterialSerialJournal bo);
 
 	// --------------------------------------------------------------------------------------------//
 	/**

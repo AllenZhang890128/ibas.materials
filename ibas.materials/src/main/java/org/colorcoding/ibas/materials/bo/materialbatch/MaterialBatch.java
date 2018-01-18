@@ -14,8 +14,10 @@ import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.mapping.BOCode;
 import org.colorcoding.ibas.bobas.mapping.DbField;
 import org.colorcoding.ibas.bobas.mapping.DbFieldType;
+import org.colorcoding.ibas.bobas.rule.IBusinessRule;
+import org.colorcoding.ibas.bobas.rule.common.BusinessRuleMinValue;
+import org.colorcoding.ibas.bobas.rule.common.BusinessRuleRequired;
 import org.colorcoding.ibas.materials.MyConfiguration;
-import org.colorcoding.ibas.materials.logic.IMaterialBatchJournalContract;
 
 /**
  * 获取-物料批次
@@ -57,13 +59,6 @@ public class MaterialBatch extends BusinessObject<MaterialBatch> implements IMat
 	 */
 	private static final String PROPERTY_ITEMCODE_NAME = "ItemCode";
 
-	public static IMaterialBatch create(IMaterialBatchJournalContract contract){
-		IMaterialBatch materialBatch = new MaterialBatch();
-		materialBatch.setBatchCode(contract.getBatchCode());
-		materialBatch.setItemCode(contract.getItemCode());
-		materialBatch.setWarehouse(contract.getWarehouse());
-		return  materialBatch;
-	}
 	/**
 	 * 物料编码 属性
 	 */
@@ -440,8 +435,6 @@ public class MaterialBatch extends BusinessObject<MaterialBatch> implements IMat
 	public final void setNotes(String value) {
 		this.setProperty(PROPERTY_NOTES, value);
 	}
-
-
 
 	/**
 	 * 属性名称-对象编号
@@ -860,77 +853,22 @@ public class MaterialBatch extends BusinessObject<MaterialBatch> implements IMat
 	}
 
 	/**
-	 * 属性名称-数据所有者
-	 */
-	private static final String PROPERTY_DATAOWNER_NAME = "DataOwner";
-
-	/**
-	 * 数据所有者 属性
-	 */
-	@DbField(name = "DataOwner", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_DATAOWNER = registerProperty(PROPERTY_DATAOWNER_NAME,
-			Integer.class, MY_CLASS);
-
-	/**
-	 * 获取-数据所有者
-	 *
-	 * @return 值
-	 */
-	@XmlElement(name = PROPERTY_DATAOWNER_NAME)
-	public final Integer getDataOwner() {
-		return this.getProperty(PROPERTY_DATAOWNER);
-	}
-
-	/**
-	 * 设置-数据所有者
-	 *
-	 * @param value
-	 *            值
-	 */
-	public final void setDataOwner(Integer value) {
-		this.setProperty(PROPERTY_DATAOWNER, value);
-	}
-
-	/**
-	 * 属性名称-数据所属组织
-	 */
-	private static final String PROPERTY_ORGANIZATION_NAME = "Organization";
-
-	/**
-	 * 数据所属组织 属性
-	 */
-	@DbField(name = "OrgCode", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_ORGANIZATION = registerProperty(PROPERTY_ORGANIZATION_NAME,
-			String.class, MY_CLASS);
-
-	/**
-	 * 获取-数据所属组织
-	 *
-	 * @return 值
-	 */
-	@XmlElement(name = PROPERTY_ORGANIZATION_NAME)
-	public final String getOrganization() {
-		return this.getProperty(PROPERTY_ORGANIZATION);
-	}
-
-	/**
-	 * 设置-数据所属组织
-	 *
-	 * @param value
-	 *            值
-	 */
-	public final void setOrganization(String value) {
-		this.setProperty(PROPERTY_ORGANIZATION, value);
-	}
-
-	/**
 	 * 初始化数据
 	 */
 	@Override
 	protected void initialize() {
 		super.initialize();// 基类初始化，不可去除
 		this.setObjectCode(MyConfiguration.applyVariables(BUSINESS_OBJECT_CODE));
-
+		this.setLocked(emYesNo.NO);
 	}
 
+	@Override
+	protected IBusinessRule[] registerRules() {
+		return new IBusinessRule[] { // 注册的业务规则
+				new BusinessRuleRequired(PROPERTY_ITEMCODE), // 要求有值
+				new BusinessRuleRequired(PROPERTY_WAREHOUSE), // 要求有值
+				new BusinessRuleRequired(PROPERTY_BATCHCODE), // 要求有值
+				new BusinessRuleMinValue<Decimal>(Decimal.ZERO, PROPERTY_QUANTITY), // 不能低于0
+		};
+	}
 }
