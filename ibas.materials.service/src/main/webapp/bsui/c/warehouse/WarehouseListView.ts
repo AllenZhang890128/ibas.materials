@@ -116,8 +116,7 @@ export class WarehouseListView extends ibas.BOListView implements IWarehouseList
                             );
                         }
                     }),
-                ],
-                contentRight: [
+                    new sap.m.ToolbarSpacer(""),
                     new sap.m.Button("", {
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://action",
@@ -169,11 +168,6 @@ export class WarehouseListView extends ibas.BOListView implements IWarehouseList
             }
         });
         return this.page;
-    }
-    /** 嵌入查询面板 */
-    embedded(view: any): void {
-        this.page.addHeaderContent(view);
-        this.page.setShowHeader(true);
     }
     private page: sap.m.Page;
     private form: sap.ui.layout.form.SimpleForm;

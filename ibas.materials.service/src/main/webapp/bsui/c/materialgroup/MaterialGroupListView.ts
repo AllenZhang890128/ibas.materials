@@ -117,8 +117,7 @@ export class MaterialGroupListView extends ibas.BOListView implements IMaterialG
                             );
                         }
                     }),
-                ],
-                contentRight: [
+                    new sap.m.ToolbarSpacer(""),
                     new sap.m.Button("", {
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://action",
@@ -170,11 +169,6 @@ export class MaterialGroupListView extends ibas.BOListView implements IMaterialG
             }
         });
         return this.page;
-    }
-    /** 嵌入查询面板 */
-    embedded(view: any): void {
-        this.page.addHeaderContent(view);
-        this.page.setShowHeader(true);
     }
     private page: sap.m.Page;
     private form: sap.ui.layout.form.SimpleForm;

@@ -70,11 +70,11 @@ export class MaterialPriceList extends BOSimple<MaterialPriceList> implements IM
     /** 映射的属性名称-基于的清单 */
     static PROPERTY_BASEDONLIST_NAME: string = "BasedOnList";
     /** 获取-基于的清单 */
-    get baseOnList(): number {
+    get basedOnList(): number {
         return this.getProperty<number>(MaterialPriceList.PROPERTY_BASEDONLIST_NAME);
     }
     /** 设置-基于的清单 */
-    set baseOnList(value: number) {
+    set basedOnList(value: number) {
         this.setProperty(MaterialPriceList.PROPERTY_BASEDONLIST_NAME, value);
     }
     /** 映射的属性名称-系数 */
@@ -288,6 +288,7 @@ export class MaterialPriceList extends BOSimple<MaterialPriceList> implements IM
         this.materialPriceItems = new MaterialPriceItems(this);
         this.objectCode = config.applyVariables(MaterialPriceList.BUSINESS_OBJECT_CODE);
         this.currency = config.get(CONFIG_ITEM_DEFAULT_CURRENCY, "CNY");
+        this.factor = 1;
     }
 }
 export class MaterialPriceItems extends BusinessObjects<MaterialPriceItem, MaterialPriceList> implements IMaterialPriceItems {
